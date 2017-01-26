@@ -5,6 +5,12 @@ const (
 )
 
 func GetDisplay() string {
+	distro := GetDist()
+
+	if distro.Display != "" {
+		return distro.Display + " " + distro.Release
+	}
+
 	return Name
 }
 
