@@ -1,4 +1,4 @@
-//+build !windows,!darwin,!linux
+//+build !windows,!darwin,!linux,!freebsd,!openbsd,!dragonfly,!netbsd,!solaris
 
 package oslib
 
