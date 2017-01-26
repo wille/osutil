@@ -7,3 +7,7 @@ const (
 func GetDisplay() string {
 	return Name
 }
+
+func GetVersion() string {
+	return ""
+}
