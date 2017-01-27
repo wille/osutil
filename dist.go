@@ -22,10 +22,17 @@ type Distro struct {
 }
 
 func init() {
-	dists = make([]distroInfo, 3)
-	dists[0] = distroInfo{"Debian", nil, nil}
-	dists[1] = distroInfo{"Ubuntu", nil, nil}
-	dists[2] = distroInfo{"openSUSE", []string{"SUSE Linux", "openSUSE project"}, []string{"/etc/SuSE-release"}}
+	dists = []distroInfo{
+		{"Debian", nil, nil},
+		{"Ubuntu", nil, nil},
+		{"openSUSE", []string{"SUSE Linux", "openSUSE project"}, []string{"/etc/SuSE-release"}},
+		{"Mint Linux", []string{"LinuxMint", "mint"}, nil},
+		{"Gentoo", nil, []string{"/etc/gentoo-release"}},
+		{"Fedora", nil, []string{"/etc/fedora-release"}},
+		{"CentOS", nil, []string{"/etc/centos-release"}},
+		{"Arch Linux", []string{"archlinux", "archarm"}, nil},
+		{"Kali Linux", []string{"kali", "debian kali linux"}, nil},
+	}
 }
 
 func getLSB() (map[string]string, bool) {
