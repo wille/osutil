@@ -10,7 +10,7 @@ const (
 	Name = "Windows"
 )
 
-func GetVersion() string {
+func getEdition() string {
 	cmd := exec.Command("cmd")
 
 	var out bytes.Buffer
@@ -35,8 +35,8 @@ func GetVersion() string {
 	return strings.Trim(ver, " ")
 }
 
-func getEdition() string {
-	version := GetVersion()
+func GetVersion() string {
+	version := getEdition()
 	parts := strings.Split(version, ".")
 	majormin := parts[0] + "." + parts[1]
 
@@ -66,7 +66,7 @@ func getEdition() string {
 
 func GetDisplay() string {
 	display := Name
-	version := getEdition()
+	version := GetVersion()
 
 	if version != "" {
 		display += " " + version
