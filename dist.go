@@ -30,7 +30,7 @@ func init() {
 		{"Gentoo", nil, []string{"/etc/gentoo-release"}},
 		{"Fedora", nil, []string{"/etc/fedora-release"}},
 		{"CentOS", nil, []string{"/etc/centos-release"}},
-		{"Arch Linux", []string{"archlinux", "archarm"}, nil},
+		{"Arch Linux", []string{"archlinux", "archarm", "arch"}, nil},
 		{"Kali Linux", []string{"kali", "debian kali linux"}, nil},
 	}
 }
