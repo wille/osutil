@@ -33,6 +33,8 @@ func init() {
 
 	mapping = make(map[int]version)
 
+	mapping[18] = version{"10.14", "macOS", "Mojave"}
+	mapping[17] = version{"10.13", "macOS", "High Sierra"}
 	mapping[16] = version{"10.12", "macOS", "Sierra"}
 	mapping[15] = version{"10.11", "Mac OS X", "El Capitan"}
 	mapping[14] = version{"10.10", "Mac OS X", "Yosemite"}
@@ -48,23 +50,19 @@ func init() {
 }
 
 func GetVersion() string {
-	_, ok := mapping[kernelVersion]
-
-	if !ok {
-		return ""
+	if v, ok := mapping[kernelVersion]; ok {
+		return mapping[kernelVersion].release
 	}
 
-	return mapping[kernelVersion].release
+	return ""
 }
 
 func GetDisplay() string {
 	display := "macOS"
 
-	release, ok := mapping[kernelVersion]
-
-	if ok {
-		display = release.name + " " + release.release + " " + release.releaseName
+	if release, ok := mapping[kernelVersion]; ok {
+		return release.name + " " + release.release + " " + release.releaseName
 	}
 
-	return display
+	return "macOS"
 }
