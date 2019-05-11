@@ -1,6 +1,6 @@
 //+build !windows,!darwin,!linux,!freebsd,!openbsd,!dragonfly,!netbsd,!solaris
 
-package oslib
+package osutil
 
 import "runtime"
 

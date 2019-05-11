@@ -1,3 +1,3 @@
-package oslib
+package osutil
 
 const Name = "NetBSD"

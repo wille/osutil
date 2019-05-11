@@ -1,4 +1,4 @@
-package oslib
+package osutil
 
 import (
 	"io/ioutil"

@@ -1,4 +1,4 @@
-package oslib
+package osutil
 
 const (
 	Windows      = "Windows"

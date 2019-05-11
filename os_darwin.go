@@ -1,4 +1,4 @@
-package oslib
+package osutil
 
 /*
 #include <sys/sysctl.h>

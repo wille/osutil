@@ -1,6 +1,6 @@
 //+build freebsd,openbsd,dragonfly,netbsd
 
-package oslib
+package osutil
 
 func GetVersion() string {
 	return ""
