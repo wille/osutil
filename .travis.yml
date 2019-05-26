@@ -1,0 +1,22 @@
+language: go
+env:
+  global:
+    - GOARCH=amd64
+    - GO_VERSION=1.12
+matrix:
+  include:
+    - os: osx
+      env: GOOS=darwin
+    - os: windows
+      env: GOOS=windows
+    - os: linux
+      env: GOOS=linux
+    - os: linux
+      env: GOOS=freebsd
+    - os: linux
+      env: GOOS=openbsd
+    - os: linux
+      env: GOOS=netbsd
+
+script:
+  - go test
