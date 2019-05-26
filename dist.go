@@ -39,7 +39,11 @@ func getLSB() (map[string]string, bool) {
 	lsb := make(map[string]string)
 
 	proc := exec.Command("lsb_release", "-irc")
-	raw, _ := proc.Output()
+	raw, err := proc.Output()
+
+	if err != nil {
+		return nil, false
+	}
 
 	s := string(raw)
 
