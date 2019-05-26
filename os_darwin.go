@@ -51,15 +51,13 @@ func init() {
 
 func GetVersion() string {
 	if v, ok := mapping[kernelVersion]; ok {
-		return mapping[kernelVersion].release
+		return v.release
 	}
 
 	return ""
 }
 
 func GetDisplay() string {
-	display := "macOS"
-
 	if release, ok := mapping[kernelVersion]; ok {
 		return release.name + " " + release.release + " " + release.releaseName
 	}
