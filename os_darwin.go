@@ -33,6 +33,8 @@ func init() {
 
 	mapping = make(map[int]version)
 
+	mapping[20] = version{"11.0", "macOS", "Big Sur"}
+	mapping[19] = version{"10.15", "macOS", "Catalina"}
 	mapping[18] = version{"10.14", "macOS", "Mojave"}
 	mapping[17] = version{"10.13", "macOS", "High Sierra"}
 	mapping[16] = version{"10.12", "macOS", "Sierra"}
