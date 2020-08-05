@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os/exec"
 	"strings"
+	"syscall"
 )
 
 const (
@@ -15,6 +16,9 @@ func getEdition() string {
 
 	var out bytes.Buffer
 	cmd.Stdout = &out
+	// the next 2 lines makes a console window hidden, that is expected behavior in most cases.
+	cmd.SysProcAttr = new(syscall.SysProcAttr)
+	cmd.SysProcAttr.HideWindow = true
 
 	err := cmd.Run()
 	if err != nil {
