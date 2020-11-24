@@ -11,7 +11,7 @@ func Test(t *testing.T) {
 	fmt.Println("Display:", GetDisplay())
 	fmt.Println("Arch:", GetDisplayArch())
 
-	if Name == "Linux" {
+	if Name == Linux {
 		dist := GetDist()
 		fmt.Println("Dist:", dist.Display)
 		fmt.Println("Release:", dist.Release)
