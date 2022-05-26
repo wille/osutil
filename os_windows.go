@@ -2,6 +2,7 @@ package osutil
 
 import (
 	"bytes"
+	"fmt"
 	"os/exec"
 	"strings"
 	"syscall"
@@ -26,21 +27,18 @@ func getEdition() string {
 	}
 
 	raw := out.String()
-	i1 := strings.Index(raw, "[Version")
-	i2 := strings.Index(raw, "]")
-	var ver string
-
-	if i1 == -1 || i2 == -1 {
-		ver = ""
-	} else {
-		ver = raw[i1+len("[Version") : i2]
+	ver, err := parseVersion(raw)
+	if err != nil {
+		panic(err)
 	}
-
-	return strings.Trim(ver, " ")
+	return ver
 }
 
 func GetVersion() string {
 	version := getEdition()
+	if version == "" {
+		return ""
+	}
 	parts := strings.Split(version, ".")
 	majormin := parts[0] + "." + parts[1]
 
@@ -77,4 +75,58 @@ func GetDisplay() string {
 	}
 
 	return display
+}
+
+func GetDist() Distro {
+	return Distro{
+		Display:  Name,
+		Release:  getEdition(),
+		Codename: "",
+	}
+}
+
+func parseVersion(raw string) (string, error) {
+	// NOTE: state
+	//  0-start
+	//  1-inside
+	//  2-version found
+	//  3-stop
+	var state = 0
+	newErr := func(reason string) error {
+		return fmt.Errorf("invalid version:%s: reason:%s", raw, reason)
+	}
+	// first and last version character
+	var i1, i2 = -1, -1
+	for i := 0; i < len(raw); i++ {
+		if state == 3 {
+			break
+		}
+		switch raw[i] {
+		case '[':
+			if state != 0 {
+				return "", newErr("too many '['")
+			}
+			state = 1
+		case ']':
+			if state <= 0 {
+				return "", newErr("']' must bebind '['")
+			}
+			state = 3
+		case ' ':
+			// pass
+		default:
+			// isdigit or isdot
+			if s := raw[i]; (s >= '0' && s <= '9') || s == '.' {
+				if state == 1 {
+					i1 = i // first char
+					state = 2
+				}
+				i2 = i // last char
+			}
+		}
+	}
+	if i1 == -1 || i2 == -1 {
+		return "", newErr("missing index")
+	}
+	return raw[i1 : i2+1], nil
 }
