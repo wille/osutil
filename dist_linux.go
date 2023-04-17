@@ -24,6 +24,7 @@ func init() {
 		{"Gentoo", nil, []string{"/etc/gentoo-release"}},
 		{"Fedora", nil, []string{"/etc/fedora-release"}},
 		{"CentOS", nil, []string{"/etc/centos-release"}},
+		{"Oracle Linux", nil, []string{"/etc/oracle-release"}},
 		{"Arch Linux", []string{"archlinux", "archarm", "arch"}, nil},
 		{"Kali Linux", []string{"kali", "debian kali linux"}, nil},
 	}
