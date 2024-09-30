@@ -2,8 +2,20 @@ package osutil
 
 import (
 	"io/ioutil"
+	"os/exec"
 	"strings"
 )
+
+func getFreeBSDVersion() (string, bool) {
+	proc := exec.Command("freebsd-version", "-u")
+	raw, err := proc.Output()
+
+	if err != nil {
+		return "", false
+	}
+
+	return string(raw), true
+}
 
 func getOSRelease() (map[string]string, bool) {
 	osmap := make(map[string]string)
@@ -36,6 +48,11 @@ func getOSRelease() (map[string]string, bool) {
 func GetDist() Distro {
 	var detect string
 	var release string
+
+	version, freeBSDVersionExists := getFreeBSDVersion()
+	if freeBSDVersionExists {
+		return Distro{"FreeBSD", version, ""}
+	}
 
 	osmap, osMapExists := getOSRelease()
 
