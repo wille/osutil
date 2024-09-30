@@ -14,7 +14,7 @@ func getFreeBSDVersion() (string, bool) {
 		return "", false
 	}
 
-	return string(raw), true
+	return strings.TrimRight(string(raw), "\n"), true
 }
 
 func getOSRelease() (map[string]string, bool) {
