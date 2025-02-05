@@ -1,6 +1,7 @@
 package osutil
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -14,10 +15,16 @@ var kernelVersion int
 
 func init() {
 	ver := getKernelRelease()
+	fmt.Println(ver)
 	kernelVersion, _ = strconv.Atoi(ver[:strings.Index(ver, ".")])
 
 	mapping = make(map[int]version)
 
+	// Updated from https://en.wikipedia.org/wiki/MacOS_version_history#Releases
+	mapping[24] = version{"15.0", "macOS", "Sequoia"}
+	mapping[23] = version{"14.0", "macOS", "Sonoma"}
+	mapping[22] = version{"13.0", "macOS", "Ventura"}
+	mapping[21] = version{"12.0", "macOS", "Monterey"}
 	mapping[20] = version{"11.0", "macOS", "Big Sur"}
 	mapping[19] = version{"10.15", "macOS", "Catalina"}
 	mapping[18] = version{"10.14", "macOS", "Mojave"}
