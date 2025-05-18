@@ -15,7 +15,6 @@ var kernelVersion int
 
 func init() {
 	ver := getKernelRelease()
-	fmt.Println(ver)
 	kernelVersion, _ = strconv.Atoi(ver[:strings.Index(ver, ".")])
 
 	mapping = make(map[int]version)
