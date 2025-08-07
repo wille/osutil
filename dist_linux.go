@@ -75,6 +75,9 @@ func getOSRelease() (map[string]string, bool) {
 		if line == "" {
 			break
 		}
+		if strings.HasPrefix(line, "#") == true {
+			continue
+		}
 
 		pair := strings.Split(line, "=")
 		k := pair[0]
