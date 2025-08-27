@@ -1,7 +1,6 @@
 package osutil
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
