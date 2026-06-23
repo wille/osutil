@@ -9,43 +9,74 @@ type version struct {
 	release, name, releaseName string
 }
 
-var mapping map[int]version
+// mapping maps the Darwin kernel major version to the macOS release it ships
+// with. Updated from https://en.wikipedia.org/wiki/MacOS_version_history#Releases
+var mapping = map[int]version{
+	25: {"26.0", "macOS", "Tahoe"},
+	24: {"15.0", "macOS", "Sequoia"},
+	23: {"14.0", "macOS", "Sonoma"},
+	22: {"13.0", "macOS", "Ventura"},
+	21: {"12.0", "macOS", "Monterey"},
+	20: {"11.0", "macOS", "Big Sur"},
+	19: {"10.15", "macOS", "Catalina"},
+	18: {"10.14", "macOS", "Mojave"},
+	17: {"10.13", "macOS", "High Sierra"},
+	16: {"10.12", "macOS", "Sierra"},
+	15: {"10.11", "Mac OS X", "El Capitan"},
+	14: {"10.10", "Mac OS X", "Yosemite"},
+	13: {"10.9", "Mac OS X", "Mavericks"},
+	12: {"10.8", "Mac OS X", "Mountain Lion"},
+	11: {"10.7", "Mac OS X", "Lion"},
+	10: {"10.6", "Mac OS X", "Snow Leopard"},
+	9:  {"10.5", "Mac OS X", "Leopard"},
+	8:  {"10.4", "Mac OS X", "Tiger"},
+	7:  {"10.3", "Mac OS X", "Panther"},
+	6:  {"10.2", "Mac OS X", "Jaguar"},
+	5:  {"10.1", "Mac OS X", "Puma"},
+}
+
 var kernelVersion int
 
 func init() {
-	ver := getKernelRelease()
-	kernelVersion, _ = strconv.Atoi(ver[:strings.Index(ver, ".")])
-
-	mapping = make(map[int]version)
-
-	// Updated from https://en.wikipedia.org/wiki/MacOS_version_history#Releases
-	mapping[24] = version{"15.0", "macOS", "Sequoia"}
-	mapping[23] = version{"14.0", "macOS", "Sonoma"}
-	mapping[22] = version{"13.0", "macOS", "Ventura"}
-	mapping[21] = version{"12.0", "macOS", "Monterey"}
-	mapping[20] = version{"11.0", "macOS", "Big Sur"}
-	mapping[19] = version{"10.15", "macOS", "Catalina"}
-	mapping[18] = version{"10.14", "macOS", "Mojave"}
-	mapping[17] = version{"10.13", "macOS", "High Sierra"}
-	mapping[16] = version{"10.12", "macOS", "Sierra"}
-	mapping[15] = version{"10.11", "Mac OS X", "El Capitan"}
-	mapping[14] = version{"10.10", "Mac OS X", "Yosemite"}
-	mapping[13] = version{"10.9", "Mac OS X", "Mavericks"}
-	mapping[12] = version{"10.8", "Mac OS X", "Mountain Lion"}
-	mapping[11] = version{"10.7", "Mac OS X", "Lion"}
-	mapping[10] = version{"10.6", "Mac OS X", "Snow Leopard"}
-	mapping[9] = version{"10.5", "Mac OS X", "Leopard"}
-	mapping[8] = version{"10.4", "Mac OS X", "Tiger"}
-	mapping[7] = version{"10.3", "Mac OS X", "Panther"}
-	mapping[6] = version{"10.2", "Mac OS X", "Jaguar"}
-	mapping[5] = version{"10.1", "Mac OS X", "Puma"}
+	kernelVersion = parseKernelMajor(getKernelRelease())
 }
 
-func GetDist() (dist Distro) {
-	if release, ok := mapping[kernelVersion]; ok {
-		dist.Display = release.name
-		dist.Release = release.release
-		dist.Codename = release.releaseName
+// parseKernelMajor extracts the leading integer from a Darwin kernel release
+// string (e.g. "23.6.0" -> 23). It returns 0 if the string cannot be parsed.
+func parseKernelMajor(release string) int {
+	i := strings.Index(release, ".")
+	if i < 0 {
+		i = len(release)
 	}
-	return
+
+	n, _ := strconv.Atoi(release[:i])
+	return n
+}
+
+func distForKernel(k int) Distro {
+	if v, ok := mapping[k]; ok {
+		return Distro{v.name, v.release, v.releaseName}
+	}
+
+	return Distro{}
+}
+
+func versionForKernel(k int) string {
+	if v, ok := mapping[k]; ok {
+		return v.release
+	}
+
+	return ""
+}
+
+func displayForKernel(k int) string {
+	if v, ok := mapping[k]; ok {
+		return v.name + " " + v.release + " " + v.releaseName
+	}
+
+	return "macOS"
+}
+
+func GetDist() Distro {
+	return distForKernel(kernelVersion)
 }

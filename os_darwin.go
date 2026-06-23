@@ -5,17 +5,9 @@ const (
 )
 
 func GetVersion() string {
-	if v, ok := mapping[kernelVersion]; ok {
-		return v.release
-	}
-
-	return ""
+	return versionForKernel(kernelVersion)
 }
 
 func GetDisplay() string {
-	if release, ok := mapping[kernelVersion]; ok {
-		return release.name + " " + release.release + " " + release.releaseName
-	}
-
-	return "macOS"
+	return displayForKernel(kernelVersion)
 }

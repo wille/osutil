@@ -1,7 +1,7 @@
 package osutil
 
 import (
-	"io/ioutil"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -18,31 +18,12 @@ func getFreeBSDVersion() (string, bool) {
 }
 
 func getOSRelease() (map[string]string, bool) {
-	osmap := make(map[string]string)
-
-	raw, err := ioutil.ReadFile("/etc/os-release")
-
+	raw, err := os.ReadFile("/etc/os-release")
 	if err != nil {
-		return osmap, false
+		return nil, false
 	}
 
-	s := string(raw)
-
-	for _, line := range strings.Split(s, "\n") {
-		if line == "" {
-			break
-		}
-
-		pair := strings.Split(line, "=")
-		k := pair[0]
-		v := pair[1]
-
-		v = strings.Trim(v, "\"")
-
-		osmap[k] = v
-	}
-
-	return osmap, true
+	return parseOSRelease(string(raw)), true
 }
 
 func GetDist() Distro {

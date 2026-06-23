@@ -17,7 +17,9 @@ const (
 // previously caused a panic (issue #3).
 var versionRegexp = regexp.MustCompile(`\d+(\.\d+)+`)
 
-func getEdition() string {
+// getVersionNumber returns the dotted version number reported by "ver" (e.g.
+// "10.0.18362.657"), or an empty string if it cannot be determined.
+func getVersionNumber() string {
 	cmd := exec.Command("cmd", "/c", "ver")
 	// Hide the console window; that is the expected behavior in most cases.
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
@@ -30,36 +32,38 @@ func getEdition() string {
 	return versionRegexp.FindString(string(out))
 }
 
-func GetVersion() string {
-	version := getEdition()
+// edition maps a dotted Windows version number to its marketing edition (e.g.
+// "10.0.x" -> "10"). It returns an empty string for unknown or malformed input.
+func edition(version string) string {
 	parts := strings.Split(version, ".")
 	if len(parts) < 2 {
 		return ""
 	}
-	majormin := parts[0] + "." + parts[1]
 
-	var edition string
-
-	switch majormin {
-	case "10.0": // 10 Server
-		edition = "10"
+	switch parts[0] + "." + parts[1] {
+	case "10.0": // 10 / 11 / Server 2016+
+		return "10"
 	case "6.3": // Server 2012 R2
-		edition = "8.1"
+		return "8.1"
 	case "6.2": // Server 2012
-		edition = "8"
+		return "8"
 	case "6.1":
-		edition = "7"
+		return "7"
 	case "6.0":
-		edition = "Vista"
+		return "Vista"
 	case "5.2":
-		edition = "Server 2003"
+		return "Server 2003"
 	case "5.1":
-		edition = "XP"
+		return "XP"
 	case "5.0":
-		edition = "2000"
+		return "2000"
 	}
 
-	return edition
+	return ""
+}
+
+func GetVersion() string {
+	return edition(getVersionNumber())
 }
 
 func GetDisplay() string {

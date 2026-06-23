@@ -58,29 +58,6 @@ func getLSB() (map[string]string, bool) {
 	return lsb, true
 }
 
-// parseOSRelease parses the key=value contents of an os-release file.
-func parseOSRelease(s string) map[string]string {
-	osmap := make(map[string]string)
-
-	for _, line := range strings.Split(s, "\n") {
-		line = strings.TrimSpace(line)
-		if line == "" || strings.HasPrefix(line, "#") {
-			continue
-		}
-
-		pair := strings.SplitN(line, "=", 2)
-		if len(pair) != 2 {
-			continue
-		}
-
-		k := strings.TrimSpace(pair[0])
-		v := strings.Trim(strings.TrimSpace(pair[1]), "\"")
-		osmap[k] = v
-	}
-
-	return osmap
-}
-
 func getOSRelease() (map[string]string, bool) {
 	raw, err := os.ReadFile("/etc/os-release")
 	if err != nil {
@@ -144,41 +121,37 @@ func suseCodename(id string) string {
 	return strings.ToUpper(suffix[:1]) + suffix[1:]
 }
 
-func GetDist() Distro {
-	var detect, release, codename, id string
+// dist resolves the distribution from already-gathered lsb_release and
+// os-release data. lsb takes precedence; os-release fills in the gaps. Either
+// map may be nil.
+func dist(lsb, osmap map[string]string) Distro {
+	detect := lsb["Distributor ID"]
+	release := lsb["Release"]
+	codename := lsb["Codename"]
+	id := osmap["ID"]
 
-	if lsb, ok := getLSB(); ok {
-		detect = lsb["Distributor ID"]
-		release = lsb["Release"]
-		codename = lsb["Codename"]
+	if detect == "" {
+		if v := osmap["DISTRIB_ID"]; v != "" {
+			detect = v
+		} else if v := osmap["NAME"]; v != "" {
+			detect = v
+		}
 	}
 
-	if osmap, ok := getOSRelease(); ok {
-		id = osmap["ID"]
-
-		if detect == "" {
-			if v := osmap["DISTRIB_ID"]; v != "" {
-				detect = v
-			} else if v := osmap["NAME"]; v != "" {
-				detect = v
-			}
+	if release == "" {
+		if v := osmap["VERSION_ID"]; v != "" {
+			release = v
 		}
-
-		if release == "" {
-			if v := osmap["VERSION_ID"]; v != "" {
-				release = v
-			}
-			if v := osmap["DISTRIB_RELEASE"]; v != "" {
-				release = v
-			}
+		if v := osmap["DISTRIB_RELEASE"]; v != "" {
+			release = v
 		}
+	}
 
-		if codename == "" {
-			if v := osmap["VERSION_CODENAME"]; v != "" {
-				codename = v
-			} else if v := osmap["DISTRIB_CODENAME"]; v != "" {
-				codename = v
-			}
+	if codename == "" {
+		if v := osmap["VERSION_CODENAME"]; v != "" {
+			codename = v
+		} else if v := osmap["DISTRIB_CODENAME"]; v != "" {
+			codename = v
 		}
 	}
 
@@ -189,4 +162,10 @@ func GetDist() Distro {
 	}
 
 	return Distro{info.Display, release, codename}
+}
+
+func GetDist() Distro {
+	lsb, _ := getLSB()
+	osmap, _ := getOSRelease()
+	return dist(lsb, osmap)
 }
