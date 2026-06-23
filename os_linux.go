@@ -14,6 +14,8 @@ func GetDisplay() string {
 	return Name
 }
 
+// GetVersion returns the distribution release (e.g. "20.04", "15.3"), or an
+// empty string if it cannot be determined.
 func GetVersion() string {
-	return ""
+	return GetDist().Release
 }
