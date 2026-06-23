@@ -1,8 +1,8 @@
 package osutil
 
 import (
-	"bytes"
 	"os/exec"
+	"regexp"
 	"strings"
 	"syscall"
 )
@@ -11,37 +11,31 @@ const (
 	Name = "Windows"
 )
 
+// versionRegexp extracts the dotted version number (e.g. 10.0.18362.657) from
+// the output of "ver". Matching the number directly avoids relying on the word
+// "Version", which is localized on non-English Windows (e.g. "[版本 ...]") and
+// previously caused a panic (issue #3).
+var versionRegexp = regexp.MustCompile(`\d+(\.\d+)+`)
+
 func getEdition() string {
-	cmd := exec.Command("cmd")
+	cmd := exec.Command("cmd", "/c", "ver")
+	// Hide the console window; that is the expected behavior in most cases.
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	// the next 2 lines makes a console window hidden, that is expected behavior in most cases.
-	cmd.SysProcAttr = new(syscall.SysProcAttr)
-	cmd.SysProcAttr.HideWindow = true
-
-	err := cmd.Run()
+	out, err := cmd.Output()
 	if err != nil {
-		panic(err)
+		return ""
 	}
 
-	raw := out.String()
-	i1 := strings.Index(raw, "[Version")
-	i2 := strings.Index(raw, "]")
-	var ver string
-
-	if i1 == -1 || i2 == -1 {
-		ver = ""
-	} else {
-		ver = raw[i1+len("[Version") : i2]
-	}
-
-	return strings.Trim(ver, " ")
+	return versionRegexp.FindString(string(out))
 }
 
 func GetVersion() string {
 	version := getEdition()
 	parts := strings.Split(version, ".")
+	if len(parts) < 2 {
+		return ""
+	}
 	majormin := parts[0] + "." + parts[1]
 
 	var edition string
