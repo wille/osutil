@@ -1,5 +1,10 @@
 package osutil
 
+import (
+	"os"
+	"strings"
+)
+
 const (
 	Name = "Linux"
 )
@@ -14,8 +19,13 @@ func GetDisplay() string {
 	return Name
 }
 
-// GetVersion returns the distribution release (e.g. "20.04", "15.3"), or an
-// empty string if it cannot be determined.
+// GetVersion returns the running kernel version (the equivalent of "uname -r",
+// e.g. "6.18.6-arch1-1"), or an empty string if it cannot be determined.
 func GetVersion() string {
-	return GetDist().Release
+	raw, err := os.ReadFile("/proc/sys/kernel/osrelease")
+	if err != nil {
+		return ""
+	}
+
+	return strings.TrimSpace(string(raw))
 }
