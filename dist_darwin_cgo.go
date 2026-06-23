@@ -1,4 +1,4 @@
-//+build darwin,cgo
+//go:build darwin && cgo
 
 package osutil
 

@@ -1,4 +1,4 @@
-// +build openbsd,dragonfly,netbsd
+//go:build openbsd || dragonfly || netbsd
 
 package osutil
 

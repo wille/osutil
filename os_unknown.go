@@ -1,4 +1,4 @@
-//+build !windows,!darwin,!linux,!freebsd,!openbsd,!dragonfly,!netbsd,!solaris
+//go:build !windows && !darwin && !linux && !freebsd && !openbsd && !dragonfly && !netbsd && !solaris
 
 package osutil
 
