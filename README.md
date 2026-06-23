@@ -1,7 +1,7 @@
 # osutil
 
-[![Travis](https://img.shields.io/travis/wille/osutil/master.svg)](https://travis-ci.org/wille/osutil)
-[![GoDoc](https://godoc.org/github.com/wille/osutil?status.svg)](https://godoc.org/github.com/wille/osutil)
+[![CI](https://github.com/wille/osutil/actions/workflows/ci.yml/badge.svg)](https://github.com/wille/osutil/actions/workflows/ci.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/wille/osutil.svg)](https://pkg.go.dev/github.com/wille/osutil)
 [![Go Report Card](https://goreportcard.com/badge/github.com/wille/osutil)](https://goreportcard.com/report/github.com/wille/osutil)
 
 Go library to detect operating system version
